@@ -108,7 +108,14 @@ public class GameFrame extends JFrame implements Runnable {
         }
     }
 
-    private void update(){
+    private void update()  {
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         bla = game.getField();
         for (int i = 0; i < buttons.length; i++) {
             if(i < 6 && player == 1){
@@ -128,6 +135,9 @@ public class GameFrame extends JFrame implements Runnable {
         textField.setText("Player"+player+" am Zug");
         player1Points.setText("Player 0 has "+game.stonesP[0]+" Points");
         player2Points.setText("Player 1 has "+game.stonesP[1]+" Points");
+
+
+
 
     }
 
