@@ -4,7 +4,7 @@ public class Main {
     private int[][] board = new int[2][6];
     private int[] boardP1 = board[0];
     private int[] boardP2 = board[1];
-    private int[] stonesP = {0, 0};
+    public int[] stonesP = {0, 0};
 
 
     public static void main(String[] args) {
@@ -66,8 +66,35 @@ public class Main {
                 stones--;
             }
         }
+        /*
+        if(iGhost == 0){
+            player = player ^ 1;
+            iGhost = 6;
+        } else {
+            iGhost--;
+        }*/
+
         //check catch
-        while (iGhost >= 0 && playerGhost != player && (board[playerGhost][iGhost] == 2 || board[playerGhost][iGhost] == 3)) {
+
+        System.out.println("bei : "+player+"  i:"+i);
+        System.out.println("Ghost : "+playerGhost+" iG:"+iGhost);
+
+        if(iGhost >= 6){
+            System.out.println("ERROR iGhost ist "+iGhost+" bei i="+i);
+        }
+        if(playerGhost != player){
+            System.out.println("Bin bei Gegner !");
+        }
+        if((board[playerGhost][iGhost] == 2 || board[playerGhost][iGhost] == 3)){
+            System.out.println("Steine Sammeln bitte");
+        }
+
+        System.out.println("Beinhaltet : "+board[playerGhost][iGhost]);
+
+
+
+        while (iGhost >= 0 && iGhost < 6 && playerGhost != player && (board[playerGhost][iGhost] == 2 || board[playerGhost][iGhost] == 3)) {
+            System.out.println("Hier Will ich hin");
             stonesP[player] += board[playerGhost][iGhost];
             board[playerGhost][iGhost] = 0;
             iGhost--;
@@ -80,8 +107,8 @@ public class Main {
 
     private boolean finished() {
         boolean finished = false;
-        for(int i = 0; i < board.length;i++ ){
-            if(countPlayersBoardStones(i) == 0 && !checkNextPossible()){
+        for (int i = 0; i < board.length; i++) {
+            if (countPlayersBoardStones(i) == 0 && !checkNextPossible()) {
                 finished = true;
             }
         }
@@ -91,16 +118,39 @@ public class Main {
     private boolean checkNextPossible() {
 
 
-
         return false;
     }
 
-    private int countPlayersBoardStones(int player){
+    private int countPlayersBoardStones(int player) {
         int count = 0;
-        for(int i : board[player]){
-            count += i ;
+        for (int i : board[player]) {
+            count += i;
         }
         return count;
+    }
+
+    public int[] getField() {
+        int[] ret = new int[12];
+        int c = 0;
+
+        for (int i = 0; i < board.length; i++) {
+            if (i == 0) {
+                for (int j = board[i].length - 1; j >= 0; j--) {
+                    ret[c] = board[i][j];
+                    c++;
+                }
+            } else {
+                for (int j = 0; j < board[i].length; j++) {
+                    ret[c] = board[i][j];
+                    c++;
+                }
+            }
+
+
+        }
+
+        return ret;
+
     }
 
 
