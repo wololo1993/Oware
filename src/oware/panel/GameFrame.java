@@ -135,7 +135,7 @@ public class GameFrame extends JFrame implements Runnable {
         textField.setText("Player"+player+" am Zug");
         player1Points.setText("Player 0 has "+game.stonesP[0]+" Points");
         player2Points.setText("Player 1 has "+game.stonesP[1]+" Points");
-
+//test
 
 
 
