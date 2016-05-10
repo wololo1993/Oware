@@ -3,7 +3,7 @@ package oware.game;
 
 public class Main {
     //private int[][] board = {{4,4,4,4,4,4},{4,4,4,4,4,4}};      // normales spielBrett
-    private int[][] board = {{0,0,0,1,0,0},{0,0,0,0,0,0}};    // board zum debuggen spezielle züge etc
+    private int[][] board = {{1,0,2,5,0,3},{0,0,0,0,0,1}};    // board zum debuggen spezielle züge etc
 
     public int[] stonesP = {0, 0};                              // die Gewonnen steine im spiel
     public boolean finished = false;
@@ -210,10 +210,10 @@ public class Main {
         return ret;
     }
 
-    public void collectAll(int player){
+    public void collectAll(){
         for(int i = 0; i < board.length ; i++){
             for(int j = 0; j < board[i].length; j++){
-                stonesP[player] += board[i][j];
+                stonesP[i] += board[i][j];
                 board[i][j] = 0;
             }
         }

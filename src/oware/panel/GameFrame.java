@@ -6,23 +6,29 @@ package oware.panel;
 
 import oware.game.Main;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 
 public class GameFrame extends JFrame implements Runnable {
 
-    public final static int HEIGHT = 400;
+
+    public final static int HEIGHT = 400 + 400;
     public final static int WIDTH = HEIGHT * 16 / 9;
     private boolean running;                                //always true (exit on close)
     Main game = new Main();
 
     //Textfields
     private JTextField textField;                           //textfield gibt an Welcher Spieler
-                                                            // dran is spaeter gewonnen etc Unten
+    // dran is spaeter gewonnen etc Unten
     private JTextField player1Points = new JTextField("");  //spieler "0" punkte Oben
     private JTextField player2Points = new JTextField("");  //spieler "1" punkte Oben
 
+    private Font[] fonts = new Font[3];
     private JButton reload = new JButton("Reaload");
     private JButton resetGame = new JButton("Reset Field"); //selbsterklärend
     public int player = 0;                                  //aktueller spieler (später zufällig wer zuerst
@@ -32,6 +38,7 @@ public class GameFrame extends JFrame implements Runnable {
 
     /**
      * Startet Game Thread \(^,^)/
+     *
      * @param args
      */
     public static void main(String[] args) {
@@ -47,6 +54,19 @@ public class GameFrame extends JFrame implements Runnable {
      */
     @Override
     public void run() {
+        //TODO TEST
+        BufferedImage buttonIcon = null;
+
+        try {
+            buttonIcon = ImageIO.read(new File("/users/janspliethoff/Ute.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        fonts [0] = new Font(Font.SANS_SERIF, Font.BOLD, 40);
+        fonts [1] = new Font(Font.SANS_SERIF, Font.BOLD, 20);
+        fonts [2] = new Font(Font.SANS_SERIF, Font.BOLD, 50);
+
         //this is a frame and here it getsa itsa Eigenschafta
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(WIDTH, HEIGHT);
@@ -60,19 +80,29 @@ public class GameFrame extends JFrame implements Runnable {
         JPanel panel = new JPanel();
 
         //set Layouts
-        bigPanel.setLayout(new GridLayout(3,1));
+        bigPanel.setLayout(new GridLayout(3, 1));
         panel.setLayout(new GridLayout(2, 6));
         UnderPanel.setLayout(new FlowLayout());
         OverPanel.setLayout(new FlowLayout());
 
         // jetzt adden wir sachen
-        UnderPanel.add(textField,CENTER_ALIGNMENT);
+        textField.setFont(fonts[1]);
+        UnderPanel.add(textField, CENTER_ALIGNMENT);
+        player1Points.setFont(fonts[2]);
         OverPanel.add(player1Points);
+        player2Points.setFont(fonts[2]);
         OverPanel.add(player2Points);
-        resetGame.addActionListener(e -> {game.resetGame(); update();});    //bevor geadded bekommt der reset button
-                                                                            // hier seine Funktion
-        reload.addActionListener(e -> {update();
-            System.out.println("Reloaded");});
+        resetGame.setFont(fonts[1]);
+        resetGame.addActionListener(e -> {
+            game.resetGame();
+            update();
+        });    //bevor geadded bekommt der reset button
+        // hier seine Funktion
+        reload.setFont(fonts[1]);
+        reload.addActionListener(e -> {
+            update();
+            System.out.println("Reloaded");
+        });
 
         UnderPanel.add(resetGame);
         UnderPanel.add(reload);
@@ -81,26 +111,33 @@ public class GameFrame extends JFrame implements Runnable {
 
         for (int i = 0; i < buttons.length; i++) {
             buttons[i] = new JButton();
-            buttons[i].setBackground(Color.BLUE);                           //setBackground will nich ? why auch ever
-            buttons[i].setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
+            //TODO ¯\_(ツ)_/¯
+            //buttons[i].setIcon(new ImageIcon(buttonIcon.getScaledInstance(buttonIcon.getWidth() / 3,
+              //      buttonIcon.getHeight() / 5, 10)));
+            //buttons[i].setBackground(Color.BLUE);
+            // setBackground will nich ? why auch ever
+            //buttons[i].setBorder(BorderFactory.createEmptyBorder());
+            buttons[i].setContentAreaFilled(false);
+            buttons[i].setFont(fonts[0]);
 
             buttons[i].addActionListener(e -> {                             //Hier bekommen die Babys ihre Funktion
                 for (int i1 = 0; i1 < buttons.length; i1++) {               // bye bye new Actionlistener das geht jetzt
                     if (e.getSource() == buttons[i1]) {                     // per lambda
 
                         if (i1 > 5) i1 = i1 - 6;                            //umwandlung von 6-12 auf 0-5 (buttens 12)
-                                                                            // aber board[2][0-5!]
+                            // aber board[2][0-5!]
 
-                        else i1 =Math.abs(i1 -5);                           //hier wird aus 5 die 0 und aus der 0 die 5
-                                                                            // verkehrte welt... weil das spiel es ja
-                                                                            // nunmal so will
+                        else
+                            i1 = Math.abs(i1 - 5);                           //hier wird aus 5 die 0 und aus der 0 die 5
+                        // verkehrte welt... weil das spiel es ja
+                        // nunmal so will
 
                         game.makeTurn(i1, player);                          //wichtig ruft game auf und vollzieht den
                         break;                                              // Zug
                     }
                 }
-                                                    //jetzt rücken wir die commis mal näher ran
-                player = player^1;                  //aus 1 mach 0 aus 0 mach 1
+                                                        //jetzt rücken wir die commis mal näher ran
+                player = player ^ 1;                  //aus 1 mach 0 aus 0 mach 1
                 update();
 
             });
@@ -122,7 +159,7 @@ public class GameFrame extends JFrame implements Runnable {
 
 
         while (running) {                       //endlos loop sorgt dafür das das Game immer weiterläuft auch wenns
-                                                // da drin eig garnichts macht TODO call by Action
+            // da drin eig garnichts macht TODO call by Action
 
             try {
                 Thread.sleep(1000000);              //das beweist mainThread ist grad noch totaaaal unnötig
@@ -136,15 +173,14 @@ public class GameFrame extends JFrame implements Runnable {
      * update bekommt das aktuelle feld aus game und speicherts in bla
      * und setzt dann alle buttons auf den neusten wert dann schauts welche es ausschalten darf
      * bzw aktivieren muss von letzter runde
-     *
+     * <p>
      * hier soll noch geschaut werden ob ein Zug erforderlich ist um den gegner zu Retten
      * wenn ja nur dieser zug möglich
-     *
-     *
+     * <p>
+     * <p>
      * \_(ツ)_/¯
-     *
      */
-    private void update()  {
+    private void update() {
 
         try {
             Thread.sleep(100);
@@ -152,10 +188,11 @@ public class GameFrame extends JFrame implements Runnable {
             e.printStackTrace();
         }
 
-        if(game.finished){
+        if (game.finished) {
 
+            game.collectAll();
             JOptionPane.showMessageDialog(this, "Game Finished");
-            JOptionPane.showMessageDialog(this, "Player0:"+game.stonesP[0]+" Player1:"+game.stonesP[1]);
+            JOptionPane.showMessageDialog(this, "Player0:" + game.stonesP[0] + " Player1:" + game.stonesP[1]);
 
             System.out.println("Game Ends");
         }
@@ -165,39 +202,39 @@ public class GameFrame extends JFrame implements Runnable {
         for (int i = 0; i < buttons.length; i++) {
             buttons[i].setText("[" + bla[i] + "]");
 
-            if(i < 6 && player == 1){
+            if (i < 6 && player == 1) {
                 buttons[i].setEnabled(false);
-            }else if(i >= 6 && player == 1){
+            } else if (i >= 6 && player == 1) {
                 buttons[i].setEnabled(true);
-            }else if(i >= 6 && player == 0){
+            } else if (i >= 6 && player == 0) {
                 buttons[i].setEnabled(false);
-            } else if(i < 6 && player == 0){
+            } else if (i < 6 && player == 0) {
                 buttons[i].setEnabled(true);
             }
-            if(buttons[i].getText().equals("[0]")){
+            if (buttons[i].getText().equals("[0]")) {
                 buttons[i].setEnabled(false);
             }
         }
-        if(game.forcedPlay){
+        if (game.forcedPlay) {
             System.out.println("forced Play !");
             int[] possible = game.getSaveTurns(player);
-            for(int i = 0 ; i < buttons.length;i++){
+            for (int i = 0; i < buttons.length; i++) {
                 buttons[i].setEnabled(false);
             }
-            for(int i = 0 ; i < possible.length; i++){
-                if(player == 0 && possible[i]==0){
-                   buttons[i].setEnabled(true);
-                } else if(player == 1 && possible[i]==0){
-                    buttons[i+6].setEnabled(true);
+            for (int i = 0; i < possible.length; i++) {
+                if (player == 0 && possible[i] == 0) {
+                    buttons[Math.abs(i - 5)].setEnabled(true);
+                } else if (player == 1 && possible[i] == 0) {
+                    buttons[i + 6].setEnabled(true);
                 }
             }
             game.forcedPlay = false;
         }
 
 
-        textField.setText("Player"+player+" am Zug");
-        player1Points.setText("Player 0 has "+game.stonesP[0]+" Points");
-        player2Points.setText("Player 1 has "+game.stonesP[1]+" Points");
+        textField.setText("Player" + player + " am Zug");
+        player1Points.setText("Player 0 has " + game.stonesP[0] + " Points");
+        player2Points.setText("Player 1 has " + game.stonesP[1] + " Points");
 
         System.out.println("fertig");
 
